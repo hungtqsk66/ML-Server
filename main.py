@@ -1,7 +1,8 @@
 from fastapi import FastAPI,APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from utils.Response.response_types import ErrorResponse
+from middlewares.exeception_middleware import handle_exceptions
+from middlewares.api_key_middleware import check_API_Key
 from routers.recommend import model
 
 
@@ -18,14 +19,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware('http')
+async def handle_request_middleware(request: Request, call_next):
+    return await check_API_Key(request,call_next)
+
 @app.middleware('http')
 async def catch_exceptions_middleware(request: Request, call_next):
-    try:
-        return await call_next(request)
-    except:
-        return ErrorResponse()
+    return await handle_exceptions(request,call_next)
 
 
 app.include_router(router)
-
-
