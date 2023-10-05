@@ -1,5 +1,6 @@
 from db.mongodb.init import MongoDB
 from bson.objectid import ObjectId
+import pandas as pd
 
 
 class MongoDB_Service():
@@ -14,11 +15,31 @@ class MongoDB_Service():
     
     
     async def get_songsStats(self,song_id:str):
+        
+        df = []
+        
         collection = self.db['Songs-Stats']
+        
         result = collection.find_one({'_id':ObjectId(song_id)})
-        if not result : return []
+        
+        if not result : return pd.DataFrame(df)
+        
         genre = result['genre']
-        return collection.find({"genre":{"$in":genre}})
+        if len(genre) == 0 : 
+            df = pd.DataFrame.from_records(collection.find({"genre":[]}))
+            df['genre'] = "None"
+
+        else : 
+            df = pd.DataFrame.from_records(collection.find({"genre":{"$in":genre}}))
+            df['genre'] = df['genre'].astype(str)
+
+        df['_id'] = df['_id'].astype(str)
+        
+        return df
+
+
+
+
         
     
     

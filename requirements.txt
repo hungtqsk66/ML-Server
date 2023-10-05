@@ -5,3 +5,4 @@ pymongo
 python-decouple
 scikit_learn
 starlette
+redis
