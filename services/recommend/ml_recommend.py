@@ -16,6 +16,7 @@ class ML_Model:
         if song_cache_value :
             
             ids = json.loads(song_cache_value) 
+            if(len(ids) == 0) : return SuccessResponse(data = await self.db.get_songs(exclude_id=song_id))
             
             return SuccessResponse(data=await self.db.get_songs(id_list=ids))
         
