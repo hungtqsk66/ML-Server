@@ -13,17 +13,19 @@ class ML_Model:
         
         song_cache_value = self.cache.get(song_id)
         
-        if song_cache_value : return SuccessResponse(data= json.loads(song_cache_value))
+        if song_cache_value :
+            
+            ids = json.loads(song_cache_value) 
+            
+            return SuccessResponse(data=await self.db.get_songs(id_list=ids))
         
         df = await self.db.get_songsStats(song_id)
         
-        if df.shape[0] == 0 : return SuccessResponse(data = await self.db.get_songs(song_id=song_id)) 
+        if df.shape[0] == 0 : return SuccessResponse(data = await self.db.get_songs(exclude_id=song_id)) 
         
         id_list = recommend_songs(song_id=song_id,data=df)
         
-        songs = await self.db.get_songs(id_list=id_list)
+        self.cache.set(song_id,json.dumps(id_list))
         
-        self.cache.set(song_id,json.dumps(songs))
-        
-        return SuccessResponse(data = songs)
+        return SuccessResponse(data = await self.db.get_songs(id_list=id_list))
     

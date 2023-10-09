@@ -43,12 +43,12 @@ class MongoDB_Service():
         
     
     
-    async def get_songs(self,id_list:list=None,song_id=None)->list:
+    async def get_songs(self,id_list:list=None,exclude_id=None)->list:
         
         collection = self.db['Songs']
         if not id_list :
             results =  list(collection.aggregate([
-                {"$match":{"_id":{"$ne":ObjectId(song_id)}}},
+                {"$match":{"_id":{"$ne":ObjectId(exclude_id)}}},
                 {"$sample": { "size": 12 } }
             ]))
     
