@@ -18,6 +18,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 @app.middleware('http')
@@ -27,6 +28,5 @@ async def handle_request_middleware(request: Request, call_next):
 @app.middleware('http')
 async def catch_exceptions_middleware(request: Request, call_next):
     return await handle_exceptions(request,call_next)
-
 
 app.include_router(router)
