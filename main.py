@@ -6,7 +6,7 @@ from middlewares.api_key_middleware import check_API_Key
 from routers.recommend import model
 
 app = FastAPI()
-router = APIRouter(prefix="/ml-server")
+router = APIRouter(prefix="/api/ml-server")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
