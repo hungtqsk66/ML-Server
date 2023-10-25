@@ -24,6 +24,4 @@ async def handle_request_middleware(request: Request, call_next):
 async def catch_exceptions_middleware(request: Request, call_next):
     return await handle_exceptions(request,call_next)
 
-@app.get("/")
-def get():return {"msg":"hello"}
 app.include_router(model.router)
