@@ -5,7 +5,7 @@ from middlewares.exeception_middleware import handle_exceptions
 from middlewares.api_key_middleware import check_API_Key
 from routers.recommend import model
 
-app = FastAPI(root_path="/api/ml-server")
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
