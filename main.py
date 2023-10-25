@@ -5,11 +5,16 @@ from middlewares.exeception_middleware import handle_exceptions
 from middlewares.api_key_middleware import check_API_Key
 from routers.recommend import model
 
+
+router = APIRouter(prefix='/api/ml-server')
+
+router.include_router(model.router)
+
 app = FastAPI()
-router = APIRouter(prefix="/api/ml-server")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,5 +29,6 @@ async def handle_request_middleware(request: Request, call_next):
 async def catch_exceptions_middleware(request: Request, call_next):
     return await handle_exceptions(request,call_next)
 
-router.include_router(model.router)
+@app.get("/")
+def get():return {"msg":"hello"}
 app.include_router(router)
