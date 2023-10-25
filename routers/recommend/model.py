@@ -1,5 +1,4 @@
-from fastapi import APIRouter,Depends
-from typing import Annotated
+from fastapi import APIRouter
 from services.recommend.ml_recommend import ML_Model
 
 router = APIRouter(prefix='/model')
