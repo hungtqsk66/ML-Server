@@ -14,7 +14,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://nth-audio.site","http://127.0.0.1:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,4 +29,6 @@ async def handle_request_middleware(request: Request, call_next):
 async def catch_exceptions_middleware(request: Request, call_next):
     return await handle_exceptions(request,call_next)
 
+@app.get("/")
+def get():return {"msg":"hello"}
 app.include_router(router)
