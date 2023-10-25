@@ -1,12 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from middlewares.exeception_middleware import handle_exceptions
 from middlewares.api_key_middleware import check_API_Key
 from routers.recommend import model
 
-app = FastAPI(root_path="/api/ml-server/")
-
+app = FastAPI()
+router = APIRouter(prefix="ml-server")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -24,4 +24,5 @@ async def handle_request_middleware(request: Request, call_next):
 async def catch_exceptions_middleware(request: Request, call_next):
     return await handle_exceptions(request,call_next)
 
-app.include_router(model.router)
+router.include_router(model.router)
+app.include_router(router)
