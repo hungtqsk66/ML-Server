@@ -1,10 +1,10 @@
 from fastapi import  Request
-from utils.Response.response_types import ErrorResponse
-from db.mongodb.init import MongoDB
+from utils.ResponseTypes import ErrorResponse
+from DB.mongodb.init import MongoDB
 from fastapi import status
 
 
-async def check_API_Key(request:Request,call_next):
+async def AuthorizeAccess(request:Request,call_next):
     
     collection =  MongoDB.getInstance()['audioServerDev']['ApiKeys']
     
@@ -12,7 +12,7 @@ async def check_API_Key(request:Request,call_next):
     
     if not api_key: return ErrorResponse(message="Missing header value",code=status.HTTP_400_BAD_REQUEST)
     
-    doc = collection.find_one({'key':api_key})
+    doc = await collection.find_one({'key':api_key})
     
     if not doc : return ErrorResponse(message="Not valid header",code=status.HTTP_400_BAD_REQUEST)
     

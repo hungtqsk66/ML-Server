@@ -1,4 +1,4 @@
-from services.recommend.utils.get_similarities import get_similarities
+from utils.Model_GetSimilarities import get_similarities
 
 def recommend_songs(song_id, data):
         

@@ -1,5 +1,5 @@
-from pymongo import MongoClient
 from decouple import config
+import motor.motor_asyncio 
 
 
 class MongoDB:
@@ -15,5 +15,5 @@ class MongoDB:
         if MongoDB._instance is not None:
             raise Exception("This is a singleton class!")
         else:
-            MongoDB._instance = MongoClient(config('IP'),int(config('PORT')))
+            MongoDB._instance = motor.motor_asyncio.AsyncIOMotorClient(config('IP'),int(config('PORT')))
     
