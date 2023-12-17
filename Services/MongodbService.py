@@ -1,4 +1,4 @@
-from DB.mongodb.init import MongoDB
+from db.mongodb.init import MongoDB
 from bson.objectid import ObjectId
 import pandas as pd
 

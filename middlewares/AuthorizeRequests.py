@@ -1,6 +1,6 @@
 from fastapi import  Request
 from utils.ResponseTypes import ErrorResponse
-from DB.mongodb.init import MongoDB
+from db.mongodb.init import MongoDB
 from fastapi import status
 
 
