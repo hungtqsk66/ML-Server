@@ -17,16 +17,15 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
+    allow_headers=["*"]
 )
 
 @app.middleware('http')
-async def AuthorizeRequestAccess_Middleware(request: Request, call_next):
+async def AuthorizeRequest_Middleware(request: Request, call_next):
     return await AuthorizeAccess(request,call_next)
 
 @app.middleware('http')
-async def ExceptionHandling_middleware(request: Request, call_next):
+async def ExceptionHandling_Middleware(request: Request, call_next):
     return await HandleExceptions(request,call_next)
 
 app.include_router(router)

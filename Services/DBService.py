@@ -8,13 +8,13 @@ class DBService():
     def __init__(self):
         self.db = MongoDB.getInstance()['audioServerDev']
         
-    def serializeDocuments(self,documents:list)->list:
+    def __serializeDocuments(self,documents:list)->list:
         for doc in documents:
             doc['_id'] = str(doc['_id'])
         return documents
     
     
-    async def get_songsStats(self,song_id:str)->pd.DataFrame:
+    async def GetSongsStats(self,song_id:str)->pd.DataFrame:
         
         collection = self.db['Songs-Stats']
         
@@ -61,13 +61,18 @@ class DBService():
         
         return df
 
-
-
-
+    
+    async def GetAllSongsStats(self,id_list:list)->list:
         
+        collection = self.db['Songs-Stats']
+        filter = {'mode':0,'duration_ms':0,'time_signature':0,'genre':0}
+        cursor = collection.find({"_id":{"$nin":id_list}},filter)
+        
+        return await cursor.to_list(None)  
     
     
-    async def get_songs(self,id_list:list=None,exclude_id=None)->list:
+
+    async def GetSongs(self,id_list:list=None,exclude_id=None)->list:
         
         collection = self.db['Songs']
         
@@ -86,6 +91,35 @@ class DBService():
             
         if cursor == None: return []
         
-        return self.serializeDocuments(await cursor.to_list(None))
+        return self.__serializeDocuments(await cursor.to_list(None))
+    
+    
+    async def GetUserItemsRecord(self,user_id:str)->list:
+        
+        collection = self.db['Users-Items']
+        
+        cursor = collection.aggregate(
+            [
+                {
+                    "$match":{"_id":ObjectId(user_id)}
+                },
+                {
+                    "$lookup": {
+                    "from": 'Songs-Stats',
+                    "localField":'records.song_id' ,
+                    "foreignField": '_id',
+                    "as": 'Songs-Stats'
+                    }
+                }
+            ]
+        )
+        
+        return await cursor.to_list(None)
+        
+        
+        
+    
+    
+    
 
         

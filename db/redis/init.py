@@ -1,16 +1,17 @@
-from redis import Redis
+#import redis.asyncio as redis
+from redis import asyncio as aioredis
 
-class Redis_DB:
+class RedisDB:
     _instance = None
 
     @staticmethod
     def getInstance():
-        if Redis_DB._instance is None:
-            Redis_DB()
-        return Redis_DB._instance
+        if RedisDB._instance is None:
+            RedisDB()
+        return RedisDB._instance
 
     def __init__(self):
-        if Redis_DB._instance is not None:
+        if RedisDB._instance is not None:
             raise Exception("This is a singleton class!")
         else:
-            Redis_DB._instance = Redis(host='127.0.0.1',port=6379)
+            RedisDB._instance = aioredis.from_url("redis:127.0.0.1:6379").client()
