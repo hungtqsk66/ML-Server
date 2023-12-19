@@ -4,7 +4,7 @@ import motor.motor_asyncio
 
 class MongoDB:
     _instance = None
-
+    #To use this class please call the get instance method along with the [database name] + [collection name] (optional)
     @staticmethod
     def getInstance():
         if MongoDB._instance is None:

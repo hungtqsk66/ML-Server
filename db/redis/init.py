@@ -3,7 +3,7 @@ from redis import asyncio as aioredis
 
 class RedisDB:
     _instance = None
-
+    #To use this class simply call the getInstance method . The default redis connection would be local DB 
     @staticmethod
     def getInstance():
         if RedisDB._instance is None:

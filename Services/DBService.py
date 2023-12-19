@@ -13,7 +13,7 @@ class DBService():
             doc['_id'] = str(doc['_id'])
         return documents
     
-    
+    #This function only used for Cosine Similarity that get maximum 80 random songs that share similar genre
     async def GetSongsStats(self,song_id:str)->pd.DataFrame:
         
         collection = self.db['Songs-Stats']
@@ -24,7 +24,7 @@ class DBService():
         
         df = pd.DataFrame.from_records([result])
         
-        genre = result['genre']
+        genre:list[str] = result['genre']
     
         if len(genre) == 0 : 
             cursor = collection.aggregate(
@@ -61,7 +61,7 @@ class DBService():
         
         return df
 
-    
+    #This function only used to get the songs-stats for model prediction
     async def GetAllSongsStats(self,id_list:list)->list:
         
         collection = self.db['Songs-Stats']
@@ -71,7 +71,7 @@ class DBService():
         return await cursor.to_list(None)  
     
     
-
+     #This function only used to get the songs metadata return to frontend client 
     async def GetSongs(self,id_list:list=None,exclude_id=None)->list:
         
         collection = self.db['Songs']
@@ -94,7 +94,9 @@ class DBService():
         return self.__serializeDocuments(await cursor.to_list(None))
     
     
-    async def GetUserItemsRecord(self,user_id:str)->list:
+    
+    #This function only used to get the songs-stats and also songs that user have listened for model creation
+    async def GetUserItemsRecord(self,user_id:str | None )->list:
         
         collection = self.db['Users-Items']
         

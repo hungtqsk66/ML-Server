@@ -9,11 +9,12 @@ from sklearn.ensemble  import RandomForestClassifier
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 
-class ModelService:
+class RecommendationService:
     def __init__(self) -> None:
         self.db_service = DBService()
         self.cache =  RedisDB.getInstance()
-        
+    
+    #Private class    
     def __get_similarities(self,song_id:str, data:pd.DataFrame)->list:
         
         song_vectorizer = CountVectorizer()
@@ -35,7 +36,7 @@ class ModelService:
             
         
         
-        
+    #Private class      
     def __GetSimilarSongs(self,song_id:str, data:pd.DataFrame)-> list:
         
         data['similarity_factor'] = self.__get_similarities(song_id, data)
@@ -57,7 +58,7 @@ class ModelService:
         
         return await self.db_service.GetSongs(id_list=id_list)
         
-
+    #Private class  
     def __BuildRandomForest(self,songStats:list,listen_counts:dict)->RandomForestClassifier | None:
         
         userRecord = pd.DataFrame(songStats)
@@ -75,8 +76,8 @@ class ModelService:
         
         
         
-        
-    async def __CreateNewRecommendation(self,user_id:str,model:RandomForestClassifier,id_list:list)->bool:
+    #Private class      
+    async def __CreateNewRecommendation(self,user_id:str | None,model:RandomForestClassifier,id_list:list)->bool:
         
         records:list = await self.db_service.GetAllSongsStats(id_list)
         recommend_ids:list[str] = []
@@ -97,8 +98,8 @@ class ModelService:
             
         return False     
         
-        
-    async def __GenerateNewSongsRecommendation(self,user_id:str,userItem:dict):
+    #Private class      
+    async def __GenerateNewSongsRecommendation(self,user_id:str | None,userItem:dict):
         
         records:list = userItem['records']
         songStats:list = userItem['Songs-Stats']
@@ -122,15 +123,17 @@ class ModelService:
         
         return acknowledge
     
-    async def Recommend_NewSongsBased(self,user_id:str , b_tasks: BackgroundTasks)->list | None:
-        #It returns a list so we must get only the first result (I know you might think i used ChatGPT =)
+    async def Recommend_NewSongs(self,user_id:str|None , b_tasks: BackgroundTasks)->list | None:
+      
+        if user_id is None : return None
+         
         result:list = await self.db_service.GetUserItemsRecord(user_id)
         userItem:dict | None  = result[0]
         
         if userItem is None : return []
+        #Create background task so the client wont have to wait until the model finish recommending new songs
         
         recommend_data:str = await self.cache.get(user_id)
-        
         if not recommend_data : 
             b_tasks.add_task(self.__GenerateNewSongsRecommendation,user_id,userItem)
             return None 
