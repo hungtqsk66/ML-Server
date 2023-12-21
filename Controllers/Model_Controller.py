@@ -13,4 +13,4 @@ async def get_similarities(id:str):
 @model_controller.get("/recommend/new")
 async def get_NewRecommendation(request: Request,b_tasks:BackgroundTasks):
     user_id:str | None = request.headers.get("x-client-id")
-    return SuccessResponse(await recommendationService.Recommend_NewSongs(user_id,b_tasks))
+    return SuccessResponse(await recommendationService.GetNewSongsRecommendation(user_id,b_tasks))

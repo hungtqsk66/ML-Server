@@ -6,19 +6,25 @@ from fastapi import status
 
 async def AuthorizeAccess(request:Request,call_next):
     
-    collection =  MongoDB.getInstance()['audioServerDev']['ApiKeys']
+    fromSameOrigin:bool =  request.headers.get('sec-fetch-site') == 'same-origin'
+    if fromSameOrigin :  
+        return await call_next(request)
     
+    collection =  MongoDB.getInstance()['audioServerDev']['ApiKeys']
     api_key = request.headers.get('x-api-key')
     
-    if not api_key: return ErrorResponse(message="Missing header value",code=status.HTTP_400_BAD_REQUEST)
+    if api_key is None: 
+        return ErrorResponse(message="",code=status.HTTP_400_BAD_REQUEST)
     
     doc = await collection.find_one({'key':api_key})
     
-    if not doc : return ErrorResponse(message="Not valid header",code=status.HTTP_400_BAD_REQUEST)
+    if doc is None : 
+        return ErrorResponse(message="Forbidden",code=status.HTTP_403_FORBIDDEN)
     
     permissions = list(doc['permissions'])
     
-    if not ("GENERAL" in permissions) : return ErrorResponse(message="You don't have permission",code=status.HTTP_401_UNAUTHORIZED)
+    if not ("GENERAL" in permissions) : 
+        return ErrorResponse(message="You don't have permission",code=status.HTTP_401_UNAUTHORIZED)
     
     return await call_next(request)
     

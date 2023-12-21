@@ -1,6 +1,7 @@
 from db.mongodb.init import MongoDB
 from bson.objectid import ObjectId
-import pandas as pd
+from pandas import DataFrame
+from typing import Optional
 
 
 class DBService():
@@ -14,15 +15,15 @@ class DBService():
         return documents
     
     #This function only used for Cosine Similarity that get maximum 80 random songs that share similar genre
-    async def GetSongsStats(self,song_id:str)->pd.DataFrame:
+    async def GetSongsStats(self,song_id:str)->DataFrame:
         
         collection = self.db['Songs-Stats']
         
         result = await collection.find_one({'_id':ObjectId(song_id)})
         
-        if result is None : return pd.DataFrame()
+        if result is None : return DataFrame()
         
-        df = pd.DataFrame.from_records([result])
+        df = DataFrame.from_records([result])
         
         genre:list[str] = result['genre']
     
@@ -37,8 +38,8 @@ class DBService():
                 ,
                 {"$sample":{"size":80}
             })
-            
-            df = df.append(pd.DataFrame.from_records(await cursor.to_list(None)),ignore_index=True)
+        
+            df = df.append(DataFrame.from_records(await cursor.to_list(None)),ignore_index=True) 
             df['genre'] = "None"
            
                
@@ -52,7 +53,7 @@ class DBService():
                     }
                 ])
      
-            df = df.append(pd.DataFrame.from_records(await cursor.to_list(None)),ignore_index=True)
+            df = df.append(DataFrame.from_records(await cursor.to_list(None)),ignore_index=True) # type: ignore
         
             
         df['_id'] = df['_id'].astype(str)
@@ -72,13 +73,13 @@ class DBService():
     
     
      #This function only used to get the songs metadata return to frontend client 
-    async def GetSongs(self,id_list:list=None,exclude_id=None)->list:
+    async def GetSongs(self,id_list:Optional[list] = None,exclude_id=None)->list:
         
         collection = self.db['Songs']
         
         cursor = None
         
-        if not id_list :
+        if id_list is None:
             cursor =  collection.aggregate([
                 {"$match":{"_id":{"$ne":ObjectId(exclude_id)}}},
                 {"$sample": { "size": 12 } }
