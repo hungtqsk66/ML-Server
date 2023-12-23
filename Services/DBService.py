@@ -2,7 +2,7 @@ from db.mongodb.init import MongoDB
 from bson.objectid import ObjectId
 from pandas import DataFrame
 from typing import Optional
-
+from jose import jwt # type: ignore
 
 class DBService():
     
@@ -39,7 +39,7 @@ class DBService():
                 {"$sample":{"size":80}
             })
         
-            df = df.append(DataFrame.from_records(await cursor.to_list(None)),ignore_index=True) 
+            df = df.append(DataFrame.from_records(await cursor.to_list(None)),ignore_index=True) # type: ignore
             df['genre'] = "None"
            
                
@@ -116,8 +116,21 @@ class DBService():
                 }
             ]
         )
-        
         return await cursor.to_list(None)
+    
+    async def ValidateAccessToken(self,user_id:str | None,accessToken:str | None)-> bool:
+        
+        collection = self.db['Keys']
+        userAuthKeys = await collection.find_one({"user":ObjectId(user_id)})
+        if userAuthKeys is None: return False
+        secret:str = userAuthKeys['publicKey']
+        decodedUser:dict = jwt.decode(accessToken,secret)
+        return decodedUser['userId'] == user_id 
+        
+        
+        
+        
+        
         
         
         

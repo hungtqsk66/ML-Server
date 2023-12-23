@@ -152,9 +152,7 @@ class RecommendationService:
             
         if len(id_list) > 12 : id_list = random.sample(id_list,12)
        
-        ids = [ObjectId(id) for id in id_list]
-       
-        return await self.db_service.GetSongs(ids)
+        return await self.db_service.GetSongs([ObjectId(id) for id in id_list])
             
         
         
