@@ -12,6 +12,7 @@ class DBService():
     def __serializeDocuments(self,documents:list)->list:
         for doc in documents:
             doc['_id'] = str(doc['_id'])
+            doc['artist'] = [str(id) for id in doc['artist']]
         return documents
     
     #This function only used for Cosine Similarity that get maximum 80 random songs that share similar genre
