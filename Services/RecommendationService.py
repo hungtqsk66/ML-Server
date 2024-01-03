@@ -54,10 +54,8 @@ class RecommendationService:
         df = await self.db_service.GetSongsStats(song_id)
         if df.shape[0] == 0 : 
             return await self.db_service.GetSongs(exclude_id=song_id) 
-        
-        id_list = self.__GetSimilarSongs(song_id=song_id,data=df)
-        
-        return await self.db_service.GetSongs(id_list=id_list)
+    
+        return await self.db_service.GetSongs(id_list=self.__GetSimilarSongs(song_id=song_id,data=df))
         
     #Private method     
     def __BuildRandomForest(self,songStats:list,listen_counts:dict)->RandomForestClassifier | None:

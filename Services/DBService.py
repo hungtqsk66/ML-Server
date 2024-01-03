@@ -29,7 +29,7 @@ class DBService():
         genre:list[str] = result['genre']
     
         if len(genre) == 0 : 
-            cursor = collection.aggregate(
+            cursor = collection.aggregate([
                 {
                     "$match":{
                         "genre":[],
@@ -37,9 +37,9 @@ class DBService():
                     }
                 }
                 ,
-                {"$sample":{"size":80}
-            })
-        
+                {"$sample":{"size":80}}
+            ])
+                   
             df = df.append(DataFrame.from_records(await cursor.to_list(None)),ignore_index=True) # type: ignore
             df['genre'] = "None"
            
@@ -56,12 +56,12 @@ class DBService():
      
             df = df.append(DataFrame.from_records(await cursor.to_list(None)),ignore_index=True) # type: ignore
         
-            
         df['_id'] = df['_id'].astype(str)
-
         df['genre'] = df['genre'].astype(str)
-        
+            
         return df
+
+        
 
     #This function only used to get the songs-stats for model prediction
     async def GetAllSongsStats(self,id_list:list)->list:
