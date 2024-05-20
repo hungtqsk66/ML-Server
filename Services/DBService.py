@@ -7,7 +7,7 @@ from jose import jwt # type: ignore
 class DBService():
     
     def __init__(self):
-        self.db = MongoDB.getInstance()['audioServerDev']
+        self.db = MongoDB.getInstance()['audioServerProduction']
         
     def __serializeDocuments(self,documents:list)->list:
         for doc in documents:
