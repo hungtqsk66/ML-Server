@@ -3,11 +3,12 @@ from bson.objectid import ObjectId
 from pandas import DataFrame
 from typing import Optional
 from jose import jwt # type: ignore
+from decouple import config #type:ignore
 
 class DBService():
     
     def __init__(self):
-        self.db = MongoDB.getInstance()['audioServerProduction']
+        self.db = MongoDB.getInstance()[config('DATABASE')]
         
     def __serializeDocuments(self,documents:list)->list:
         for doc in documents:
