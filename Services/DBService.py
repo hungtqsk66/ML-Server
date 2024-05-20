@@ -8,7 +8,7 @@ from decouple import config #type:ignore
 class DBService():
     
     def __init__(self):
-        self.db = MongoDB.getInstance()[config('DATABASE')]
+        self.db = MongoDB.getInstance()[str(config('DATABASE'))]
         
     def __serializeDocuments(self,documents:list)->list:
         for doc in documents:
