@@ -2,7 +2,7 @@ from db.mongodb.init import MongoDB
 from bson.objectid import ObjectId
 from pandas import DataFrame
 from typing import Optional
-import jwt# type: ignore
+from jose import jwt# type: ignore
 from decouple import config #type:ignore
 
 class DBService():
