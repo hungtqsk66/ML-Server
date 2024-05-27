@@ -21,13 +21,17 @@ class RecommendationService:
         song_vectorizer = CountVectorizer()
         song_vectorizer.fit(data['genre'])
         text_array1 = song_vectorizer.transform(data[data['_id']==song_id]['genre']).toarray()
+        np.nan_to_num(text_array1, copy=False)
         num_array1 = data[data['_id']==song_id].select_dtypes(include=['int', 'float']).to_numpy()
+        np.nan_to_num(num_array1, copy=False)
         sim = []
         
         for idx, row in data.iterrows():
             index:str = row['_id']
             text_array2 = song_vectorizer.transform(data[data['_id']==index]['genre']).toarray()
+            np.nan_to_num(text_array2, copy=False)
             num_array2 = data[data['_id']==index].select_dtypes(include=['int', 'float']).to_numpy()
+            np.nan_to_num(num_array2, copy=False)
             text_sim = cosine_similarity(text_array1, text_array2)[0][0]
             num_sim = cosine_similarity(num_array1, num_array2)[0][0]
             sim.append(text_sim + num_sim)
